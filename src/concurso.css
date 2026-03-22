@@ -1,0 +1,403 @@
+/* ═══════════════════════════════════════════════════
+   INVERSIÓN ARRIESGADA — INTERFAZ RETRO-FUTURISTA v2
+   ═══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+:root {
+    --cyan:    #00f5ff;
+    --magenta: #ff2a6d;
+    --yellow:  #f5e642;
+    --green:   #00ff9f;
+    --orange:  #ff8c00;
+    --purple:  #b86bff;
+    --void:    #04060f;
+    --panel:   rgba(0,10,30,0.85);
+    --border:  rgba(0,245,255,0.22);
+    --glow-c:  0 0 8px var(--cyan),   0 0 22px rgba(0,245,255,0.35);
+    --glow-m:  0 0 8px var(--magenta),0 0 22px rgba(255,42,109,0.35);
+    --glow-g:  0 0 8px var(--green),  0 0 22px rgba(0,255,159,0.35);
+    --glow-y:  0 0 8px var(--yellow), 0 0 22px rgba(245,230,66,0.35);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:'Rajdhani',sans-serif;
+    background:var(--void);
+    color:#c8e8ff;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* ── Fondo de estrellas ────────────────────────── */
+body::before{
+    content:'';
+    position:fixed;inset:0;
+    background-image:
+            radial-gradient(1px 1px at 10% 20%,rgba(0,245,255,.6) 0%,transparent 100%),
+            radial-gradient(1px 1px at 80% 5%, rgba(255,42,109,.5) 0%,transparent 100%),
+            radial-gradient(1px 1px at 55% 80%,rgba(0,255,159,.5) 0%,transparent 100%),
+            radial-gradient(1px 1px at 25% 65%,rgba(0,245,255,.4) 0%,transparent 100%),
+            radial-gradient(1px 1px at 92% 45%,rgba(245,230,66,.4) 0%,transparent 100%),
+            radial-gradient(600px 600px at 20% 50%,rgba(0,245,255,.04) 0%,transparent 100%),
+            radial-gradient(400px 400px at 80% 20%,rgba(255,42,109,.04) 0%,transparent 100%),
+            radial-gradient(500px 500px at 60% 90%,rgba(184,107,255,.04) 0%,transparent 100%);
+    pointer-events:none;z-index:0;
+    animation:bgPulse 8s ease-in-out infinite alternate;
+}
+@keyframes bgPulse{from{opacity:.7}to{opacity:1}}
+
+/* ── Líneas de escaneo CRT ───────────────────────────────── */
+body::after{
+    content:'';
+    position:fixed;inset:0;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);
+    pointer-events:none;z-index:9999;
+    animation:scanMove 10s linear infinite;
+}
+@keyframes scanMove{0%{background-position:0 0}100%{background-position:0 100px}}
+
+/* ── Esquinas del HUD ─────────────────────────────────── */
+.esquina-hud{position:fixed;width:60px;height:60px;pointer-events:none;z-index:100}
+.esquina-hud::before,.esquina-hud::after{content:'';position:absolute;background:var(--cyan);box-shadow:var(--glow-c)}
+.esquina-hud::before{width:100%;height:2px;top:0}
+.esquina-hud::after{width:2px;height:100%;top:0}
+.esquina-hud.tl{top:12px;left:12px}
+.esquina-hud.tr{top:12px;right:12px;transform:scaleX(-1)}
+.esquina-hud.bl{bottom:12px;left:12px;transform:scaleY(-1)}
+.esquina-hud.br{bottom:12px;right:12px;transform:scale(-1)}
+
+/* ── Cabecera de página ─────────────────────────────────── */
+.cabecera-pagina{position:relative;z-index:10;text-align:center;padding:36px 20px 10px}
+.cabecera-pagina h1{
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(1.6rem,5vw,3rem);font-weight:900;
+    letter-spacing:.12em;color:var(--cyan);text-shadow:var(--glow-c);
+    text-transform:uppercase;animation:titleGlitch 6s infinite;
+}
+@keyframes titleGlitch{
+    0%,95%,100%{text-shadow:var(--glow-c);transform:none}
+    96%{text-shadow:-3px 0 var(--magenta),3px 0 var(--cyan);transform:skewX(-2deg)}
+    97%{text-shadow:3px 0 var(--magenta),-3px 0 var(--cyan);transform:skewX(2deg)}
+    98%{text-shadow:var(--glow-c);transform:none}
+}
+.cabecera-pagina .subtitulo{
+    font-family:'Share Tech Mono',monospace;font-size:.75rem;
+    color:rgba(0,245,255,.5);letter-spacing:.3em;margin-top:6px;text-transform:uppercase;
+}
+
+/* ── Contenedor principal ──────────────────────────────── */
+.juego{width:min(740px,96vw);margin:0 auto;position:relative;z-index:10;padding-bottom:40px}
+
+/* ── Panel HUD ───────────────────────────────────── */
+.panel-hud{
+    background:var(--panel);border:1px solid var(--border);
+    backdrop-filter:blur(12px);
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+    position:relative;
+}
+.panel-hud::before{
+    content:'';position:absolute;inset:0;clip-path:inherit;
+    background:linear-gradient(135deg,rgba(0,245,255,.05) 0%,transparent 50%);
+    pointer-events:none;
+}
+
+/* ── Barra de estadísticas ───────────────────────────────────── */
+.estadisticas{display:flex;justify-content:space-around;align-items:center;padding:14px 24px;margin-top:20px;gap:8px}
+.estadistica-elemento{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.estadistica-etiqueta{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.25em;color:rgba(0,245,255,.5);text-transform:uppercase}
+.estadistica-valor{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:700;line-height:1}
+.estadistica-valor.valor-dinero{color:var(--green);text-shadow:var(--glow-g)}
+.estadistica-valor.valor-vidas{color:var(--magenta);text-shadow:var(--glow-m)}
+.estadistica-valor.valor-temporizador{color:var(--yellow);text-shadow:var(--glow-y)}
+.estadistica-divisor{width:1px;height:40px;background:linear-gradient(to bottom,transparent,var(--cyan),transparent);opacity:.4}
+
+/* ── Caja de pregunta ────────────────────────────────── */
+.caja-pregunta{margin-top:16px;padding:28px 32px 32px}
+.cabecera-pregunta{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--cyan);opacity:.6;letter-spacing:.3em;text-transform:uppercase;margin-bottom:12px}
+#pregunta{font-family:'Rajdhani',sans-serif;font-size:1.25rem;font-weight:600;line-height:1.5;color:#ddf0ff;text-shadow:0 0 20px rgba(0,245,255,.2);min-height:48px}
+
+/* ── Botones de respuesta ──────────────────────────────── */
+#respuestas{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+#respuestas button{
+    background:rgba(0,30,60,.7);color:#a8d8ff;
+    border:1px solid rgba(0,245,255,.3);
+    padding:14px 16px;
+    font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;letter-spacing:.05em;
+    cursor:pointer;transition:all .2s;
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+    text-align:left;
+}
+#respuestas button::before{
+    content:attr(data-letter);display:inline-block;margin-right:10px;
+    color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;text-shadow:var(--glow-c);
+}
+#respuestas button:hover:not(:disabled){
+    background:rgba(0,245,255,.12);border-color:var(--cyan);color:#fff;
+    box-shadow:inset 0 0 20px rgba(0,245,255,.08),0 0 12px rgba(0,245,255,.2);
+    transform:translateY(-2px);
+}
+.correcta{background:rgba(0,255,80,.15)!important;border-color:var(--green)!important;color:var(--green)!important;box-shadow:0 0 20px rgba(0,255,80,.3),inset 0 0 20px rgba(0,255,80,.1)!important;animation:correctaPulse .5s ease}
+.incorrectaa{background:rgba(255,42,109,.15)!important;border-color:var(--magenta)!important;color:var(--magenta)!important;box-shadow:0 0 20px rgba(255,42,109,.3),inset 0 0 20px rgba(255,42,109,.1)!important;animation:incorrectaaShake .4s ease}
+@keyframes correctaPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes incorrectaaShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.oculto{opacity:.2;pointer-events:none}
+
+/* ── Títulos de sección ──────────────────────────────── */
+.titulo-seccion{
+    font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.35em;
+    color:var(--cyan);opacity:.7;text-transform:uppercase;text-align:center;
+    margin:20px 0 8px;display:flex;align-items:center;gap:12px;
+}
+.titulo-seccion::before,.titulo-seccion::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(0,245,255,.4))}
+.titulo-seccion::after{background:linear-gradient(to left,transparent,rgba(0,245,255,.4))}
+.seccion-pista{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:rgba(0,245,255,.4);letter-spacing:.15em;text-transform:none}
+
+/* ── Controles ────────────────────────────────────── */
+.controles{display:flex;justify-content:center;gap:16px;margin:18px 0;flex-wrap:wrap}
+button{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;padding:10px 20px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+
+#botonEmpezar{
+    background:linear-gradient(135deg,rgba(0,245,255,.2),rgba(0,245,255,.05));
+    color:var(--cyan);border:1px solid rgba(0,245,255,.6);
+    box-shadow:0 0 15px rgba(0,245,255,.2),inset 0 0 15px rgba(0,245,255,.05);
+    font-size:1.1rem;padding:14px 36px;
+    animation:startPulse 2s ease-in-out infinite;
+}
+@keyframes startPulse{0%,100%{box-shadow:0 0 15px rgba(0,245,255,.2),inset 0 0 15px rgba(0,245,255,.05)}50%{box-shadow:0 0 30px rgba(0,245,255,.5),inset 0 0 20px rgba(0,245,255,.1)}}
+#botonEmpezar:hover{background:rgba(0,245,255,.3);transform:translateY(-3px)}
+
+#botonPlantar,.boton-plantar{
+    background:linear-gradient(135deg,rgba(255,42,109,.2),rgba(255,42,109,.05));
+    color:var(--magenta);border:1px solid rgba(255,42,109,.6);
+    box-shadow:0 0 15px rgba(255,42,109,.2);font-size:1.1rem;padding:14px 36px;
+}
+#botonPlantar:hover,.boton-plantar:hover{background:rgba(255,42,109,.25);transform:translateY(-3px);box-shadow:0 0 30px rgba(255,42,109,.5)}
+
+.boton-continuar{
+    background:linear-gradient(135deg,rgba(0,245,255,.18),rgba(0,245,255,.04));
+    color:var(--cyan);border:1px solid rgba(0,245,255,.6);
+    font-size:1.05rem;padding:13px 32px;
+    box-shadow:0 0 18px rgba(0,245,255,.2);
+}
+.boton-continuar:hover{background:rgba(0,245,255,.28);transform:translateY(-3px);box-shadow:0 0 30px rgba(0,245,255,.4)}
+
+/* ── Comodines ───────────────────────────────────── */
+.comodines{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:16px 20px;margin-top:4px}
+.comodines button{background:rgba(0,30,60,.7);color:var(--cyan);border:1px solid rgba(0,245,255,.35);padding:10px 18px;font-size:.85rem}
+.comodines button:hover{background:rgba(0,245,255,.1);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,245,255,.3);transform:translateY(-2px)}
+.contador-insignia{font-family:'Orbitron',sans-serif;font-size:.7rem;color:var(--yellow);text-shadow:var(--glow-y)}
+
+/* ── Potenciadores ───────────────────────────────── */
+.potenciadores{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:16px 20px;margin-top:4px}
+.potenciadores button{background:rgba(20,0,40,.7);color:var(--purple);border:1px solid rgba(184,107,255,.35);padding:10px 18px;font-size:.85rem}
+.potenciadores button:hover{background:rgba(184,107,255,.1);border-color:var(--purple);box-shadow:0 0 12px rgba(184,107,255,.3);transform:translateY(-2px)}
+
+/* ── Icono del escudo ─────────────────────────────────── */
+#iconoEscudo{position:fixed;top:80px;right:20px;font-size:2rem;visibility:hidden;filter:drop-shadow(0 0 8px var(--green));animation:shieldFloat 2s ease-in-out infinite;z-index:200}
+@keyframes shieldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ── Aviso del temporizador ───────────────────────────────── */
+.aviso-temporizador .estadistica-valor.valor-temporizador{color:var(--magenta)!important;text-shadow:var(--glow-m)!important;animation:timerBlink .5s step-end infinite}
+@keyframes timerBlink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Notificaciones emergentes ─────────────────────────── */
+.notificacion{
+    position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+    font-family:'Orbitron',sans-serif;font-size:.78rem;letter-spacing:.1em;
+    padding:12px 28px;border:1px solid;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+    opacity:0;transition:all .3s ease;z-index:5000;backdrop-filter:blur(8px);white-space:nowrap;
+}
+.notificacion.notificacion-visible{opacity:1;transform:translateX(-50%) translateY(0)}
+.notificacion-exito{background:rgba(0,255,80,.12);border-color:var(--green);color:var(--green);box-shadow:0 0 20px rgba(0,255,80,.3)}
+.notificacion-error  {background:rgba(255,42,109,.12);border-color:var(--magenta);color:var(--magenta);box-shadow:0 0 20px rgba(255,42,109,.3)}
+.notificacion-info   {background:rgba(0,245,255,.12);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,245,255,.3)}
+.notificacion-escudo {background:rgba(0,255,159,.12);border-color:var(--green);color:var(--green);box-shadow:0 0 20px rgba(0,255,159,.3)}
+
+
+/* ════════════════════════════════════════════════════
+   BASE COMPARTIDA DE PANTALLAS A PANTALLA COMPLETA
+   ════════════════════════════════════════════════════ */
+#pantallaTramo,#pantallaDerrota,#pantallaVictoria,#pantallaPlantarse{
+    position:fixed;inset:0;
+    background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(0,245,255,.05) 0%,transparent 70%),rgba(4,6,15,.96);
+    backdrop-filter:blur(20px);
+    color:white;
+    display:none;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    overflow-y:auto;
+    padding:40px 20px 60px;
+    z-index:1000;
+}
+
+/* ════════════════════════════════════════════════════
+   PANTALLA DE TRAMO
+   ════════════════════════════════════════════════════ */
+.tramo-cabecera{text-align:center;margin-bottom:24px}
+.tramo-etiqueta{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:rgba(0,245,255,.5);letter-spacing:.3em;margin-bottom:6px}
+.tramo-titulo{font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:var(--cyan);text-shadow:var(--glow-c);letter-spacing:.2em;text-transform:uppercase;animation:titleGlitch 6s infinite}
+.tramo-insignia-nivel{display:inline-flex;flex-direction:column;align-items:center;margin-top:14px;border:1px solid rgba(0,245,255,.25);padding:10px 28px;background:rgba(0,245,255,.05);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.tramo-insignia-etiqueta{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.25em;color:rgba(0,245,255,.5);text-transform:uppercase}
+.tramo-insignia-valor{font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:700;color:var(--cyan);text-shadow:var(--glow-c);margin-top:4px}
+
+.tramo-bloque-capital{padding:20px 28px;margin:0 auto 20px;width:min(500px,90vw);text-align:center}
+.tramo-capital-etiqueta{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(0,245,255,.5);letter-spacing:.25em;display:block;text-transform:uppercase;margin-bottom:6px}
+.tramo-capital-valor{font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900;color:var(--green);text-shadow:var(--glow-g);display:block}
+.tramo-capital-sub{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:rgba(0,245,255,.35);letter-spacing:.2em;margin-top:8px}
+.tramo-pista-progreso{width:100%;height:6px;background:rgba(0,245,255,.1);border-radius:3px;margin-top:14px;overflow:hidden}
+.tramo-barra-progreso{height:100%;background:linear-gradient(to right,var(--cyan),var(--green));border-radius:3px;transition:width 1s ease;box-shadow:0 0 8px rgba(0,245,255,.4)}
+
+.tramo-bloque-siguiente{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.tramo-etiqueta-siguiente{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:rgba(0,245,255,.5);letter-spacing:.2em;text-transform:uppercase}
+.tramo-valor-siguiente{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:700;color:var(--yellow);text-shadow:var(--glow-y)}
+
+.tramo-acciones{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+
+.tramo-titulo-seccion{
+    font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.3em;
+    color:rgba(0,245,255,.6);text-transform:uppercase;
+    width:100%;max-width:600px;text-align:center;
+    border-top:1px solid rgba(0,245,255,.12);padding-top:18px;margin:18px 0 10px;
+}
+
+.tramo-potenciadores{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:4px}
+.tramo-potenciadores button{background:rgba(20,0,40,.7);color:var(--purple);border:1px solid rgba(184,107,255,.35);padding:9px 16px;font-size:.8rem}
+.tramo-potenciadores button:hover{background:rgba(184,107,255,.1);border-color:var(--purple);box-shadow:0 0 12px rgba(184,107,255,.3);transform:translateY(-2px)}
+
+/* ── Botones de compra de comodines ────────────────────────── */
+.tramo-cuadricula-compra{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:600px;margin:0 auto 8px}
+.boton-comprar-comodin{
+    background:rgba(0,245,255,.06);color:var(--cyan);
+    border:1px solid rgba(0,245,255,.3);
+    padding:10px 16px;font-size:.8rem;
+    display:flex;align-items:center;gap:10px;
+}
+.boton-comprar-comodin:hover{background:rgba(0,245,255,.14);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,245,255,.25);transform:translateY(-2px)}
+/* Comodín gastado: resaltado en magenta para que el jugador sepa que fue usado */
+.boton-comprar-comodin.comodin-gastado{
+    background:rgba(255,42,109,.08);
+    border-color:rgba(255,42,109,.5);
+    color:var(--magenta);
+}
+.boton-comprar-comodin.comodin-gastado .stock-compra{ color:var(--magenta); opacity:.7; }
+.boton-comprar-comodin.comodin-gastado:hover{background:rgba(255,42,109,.18);border-color:var(--magenta);box-shadow:0 0 12px rgba(255,42,109,.3)}
+/* Ya comprado: en gris y desactivado */
+.boton-comprar-comodin.comodin-comprado{
+    background:rgba(0,255,159,.06);
+    border-color:rgba(0,255,159,.3);
+    color:var(--green);
+    opacity:.6;
+    cursor:not-allowed;
+}
+.boton-comprar-comodin.comodin-comprado:hover{ transform:none; box-shadow:none; }
+/* Aún disponible (tiene usos) — no se puede comprar */
+.boton-comprar-comodin.comodin-disponible{
+    background:rgba(0,245,255,.04);
+    border-color:rgba(0,245,255,.15);
+    color:rgba(0,245,255,.45);
+    cursor:not-allowed;
+}
+.boton-comprar-comodin.comodin-disponible:hover{ transform:none; box-shadow:none; }
+.etiqueta-compra{font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.05em}
+.coste-compra{font-family:'Orbitron',sans-serif;font-size:.7rem;color:var(--yellow);text-shadow:var(--glow-y)}
+.stock-compra{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(0,245,255,.5)}
+
+/* ── Ruleta ──────────────────────────────────────── */
+#contenedorRuleta{display:flex;flex-direction:column;align-items:center;gap:14px;margin:10px 0}
+#ruleta{border:2px solid rgba(0,245,255,.4);border-radius:50%;box-shadow:0 0 30px rgba(0,245,255,.2),inset 0 0 30px rgba(0,0,0,.5)}
+.boton-girar{background:rgba(0,30,60,.8);color:var(--cyan);border:1px solid rgba(0,245,255,.4);padding:10px 26px}
+.boton-girar:hover{background:rgba(0,245,255,.12);box-shadow:0 0 16px rgba(0,245,255,.3);transform:translateY(-2px)}
+#resultadoRuleta{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--green);text-shadow:var(--glow-g);letter-spacing:.15em;min-height:28px;margin-top:4px}
+
+
+/* ════════════════════════════════════════════════════
+   PANTALLA DE DERROTA
+   ════════════════════════════════════════════════════ */
+#pantallaDerrota{
+    background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(255,42,109,.07) 0%,transparent 70%),rgba(4,6,15,.97);
+}
+
+.derrota-craneo-contenedor{margin-bottom:20px;position:relative}
+.derrota-craneo{
+    width:min(200px,50vw);height:auto;
+    filter:drop-shadow(0 0 18px rgba(255,42,109,.5)) drop-shadow(0 0 40px rgba(255,42,109,.25));
+    animation:skullPulse 2s ease-in-out infinite, skullEntry .8s cubic-bezier(.17,.67,.35,1.3) both;
+}
+@keyframes skullPulse{0%,100%{filter:drop-shadow(0 0 18px rgba(255,42,109,.5)) drop-shadow(0 0 40px rgba(255,42,109,.25))}50%{filter:drop-shadow(0 0 28px rgba(255,42,109,.9)) drop-shadow(0 0 60px rgba(255,42,109,.5))}}
+@keyframes skullEntry{from{opacity:0;transform:scale(.4) rotate(-15deg)}to{opacity:1;transform:scale(1) rotate(0deg)}}
+.linea-glitch{animation:glitchLine 3s step-end infinite}
+@keyframes glitchLine{0%,90%,100%{opacity:.3;transform:translateX(0)}92%{opacity:.9;transform:translateX(6px)}94%{opacity:.3;transform:translateX(-4px)}96%{opacity:.9;transform:translateX(0)}}
+
+.derrota-titulo{
+    font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,5vw,2.4rem);font-weight:900;
+    color:var(--magenta);text-shadow:var(--glow-m);letter-spacing:.18em;text-transform:uppercase;
+    animation:titleGlitch 4s infinite;
+}
+.derrota-subtitulo{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:rgba(255,42,109,.55);letter-spacing:.3em;margin:8px 0 24px}
+
+.derrota-bloque-dinero{
+    display:flex;flex-direction:column;align-items:center;
+    border:1px solid rgba(255,42,109,.3);padding:16px 40px;margin-bottom:28px;
+    background:rgba(255,42,109,.06);
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+}
+.derrota-etiqueta-dinero{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(255,42,109,.5);letter-spacing:.25em;text-transform:uppercase}
+.derrota-valor-dinero{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:var(--magenta);text-shadow:var(--glow-m)}
+
+.derrota-acciones{margin-bottom:16px}
+.boton-reintentar{
+    background:linear-gradient(135deg,rgba(255,42,109,.2),rgba(255,42,109,.05));
+    color:var(--magenta);border:1px solid rgba(255,42,109,.7);
+    font-size:1.15rem;padding:16px 44px;
+    box-shadow:0 0 20px rgba(255,42,109,.25);
+    animation:retryPulse 2s ease-in-out infinite;
+}
+@keyframes retryPulse{0%,100%{box-shadow:0 0 20px rgba(255,42,109,.25)}50%{box-shadow:0 0 40px rgba(255,42,109,.6),0 0 80px rgba(255,42,109,.2)}}
+.boton-reintentar:hover{background:rgba(255,42,109,.3);transform:translateY(-3px);box-shadow:0 0 40px rgba(255,42,109,.6)}
+
+.derrota-texto-scanline{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:rgba(255,42,109,.25);letter-spacing:.3em;margin-top:24px;animation:scanlineText 4s step-end infinite}
+@keyframes scanlineText{0%,100%{opacity:.25}50%{opacity:.6}}
+
+
+/* ════════════════════════════════════════════════════
+   PANTALLA DE PLANTARSE
+   ════════════════════════════════════════════════════ */
+.plantar-icono{font-size:4rem;margin-bottom:12px;filter:drop-shadow(0 0 14px rgba(0,255,159,.5));animation:shieldFloat 2s ease-in-out infinite}
+.plantar-titulo{font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:900;color:var(--green);text-shadow:var(--glow-g);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
+.plantar-sub{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:rgba(0,255,159,.45);letter-spacing:.25em;margin-bottom:24px}
+.plantar-bloque-dinero{display:flex;flex-direction:column;align-items:center;border:1px solid rgba(0,255,159,.3);padding:16px 40px;margin-bottom:28px;background:rgba(0,255,159,.06);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.plantar-etiqueta-dinero{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(0,255,159,.5);letter-spacing:.25em;text-transform:uppercase}
+.plantar-valor-dinero{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:var(--green);text-shadow:var(--glow-g)}
+
+
+/* ════════════════════════════════════════════════════
+   PANTALLA DE VICTORIA
+   ════════════════════════════════════════════════════ */
+#pantallaVictoria{background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(245,230,66,.06) 0%,transparent 70%),rgba(4,6,15,.97)}
+.victoria-trofeo{font-size:5rem;margin-bottom:14px;animation:trophyFloat 2s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(245,230,66,.6))}
+@keyframes trophyFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+.victoria-titulo{font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,5vw,2.6rem);font-weight:900;color:var(--yellow);text-shadow:var(--glow-y);letter-spacing:.18em;text-transform:uppercase;animation:titleGlitch 6s infinite;margin-bottom:6px}
+.victoria-sub{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:rgba(245,230,66,.45);letter-spacing:.3em;margin-bottom:24px}
+.victoria-bloque-dinero{display:flex;flex-direction:column;align-items:center;border:1px solid rgba(245,230,66,.3);padding:16px 40px;margin-bottom:28px;background:rgba(245,230,66,.06);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.victoria-etiqueta-dinero{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(245,230,66,.5);letter-spacing:.25em;text-transform:uppercase}
+.victoria-valor-dinero{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:var(--yellow);text-shadow:var(--glow-y)}
+
+
+/* ── Barra de desplazamiento ───────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(0,0,0,.3)}
+::-webkit-scrollbar-thumb{background:rgba(0,245,255,.3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,245,255,.6)}
+
+/* ── Diseño responsivo ──────────────────────────────────── */
+@media(max-width:520px){
+    #respuestas{grid-template-columns:1fr}
+    .estadisticas{flex-wrap:wrap;gap:12px}
+    .estadistica-divisor{display:none}
+    .comodines,.potenciadores{flex-direction:column;align-items:center}
+    .tramo-acciones{flex-direction:column;align-items:center}
+}

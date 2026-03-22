@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INVERSIÓN ARRIESGADA // SYS-7</title>
+    <link rel="stylesheet" href="concurso.css">
+</head>
+<body>
+
+
+<!-- Esquinas del HUD -->
+<div class="esquina-hud tl"></div>
+<div class="esquina-hud tr"></div>
+<div class="esquina-hud bl"></div>
+<div class="esquina-hud br"></div>
+
+
+<!-- Escudo flotante -->
+<div id="iconoEscudo" style="visibility:hidden;">🛡️</div>
+
+
+<!-- ══════════════════════════════════════════════
+    CABECERA
+═══════════════════════════════════════════════ -->
+<header class="cabecera-pagina">
+    <h1>INVERSIÓN ARRIESGADA</h1>
+    <p class="subtitulo" id="textoArranque">// SISTEMA DE EVALUACIÓN DE RIESGO v7.3.1</p>
+</header>
+
+
+<!-- ══════════════════════════════════════════════
+    JUEGO PRINCIPAL
+═══════════════════════════════════════════════ -->
+<div class="juego">
+
+
+    <!-- Barra de estadísticas -->
+    <div class="estadisticas panel-hud">
+        <div class="estadistica-elemento">
+            <span class="estadistica-etiqueta">▲ CAPITAL</span>
+            <span class="estadistica-valor valor-dinero"><span id="dinero">0</span> €</span>
+        </div>
+        <div class="estadistica-divisor"></div>
+        <div class="estadistica-elemento">
+            <span class="estadistica-etiqueta">♥ VIDAS</span>
+            <span class="estadistica-valor valor-vidas" id="vidas">3</span>
+        </div>
+        <div class="estadistica-divisor"></div>
+        <div class="estadistica-elemento">
+            <span class="estadistica-etiqueta">⏱ TIEMPO</span>
+            <span class="estadistica-valor valor-temporizador" id="temporizador">30</span>
+        </div>
+    </div>
+
+
+    <!-- Caja de pregunta -->
+    <div class="caja-pregunta panel-hud">
+        <p class="cabecera-pregunta">// INTERROGATORIO — NIVEL <span id="etiquetaNivel">—</span></p>
+        <h2 id="pregunta">Inicializando sistema de preguntas...</h2>
+        <div id="respuestas"></div>
+    </div>
+
+
+    <!-- Controles -->
+    <div class="controles">
+        <button id="botonEmpezar" onclick="comenzar()">▶ INICIAR PROTOCOLO</button>
+        <button id="botonPlantar" class="oculto" onclick="plantarse()">⏹ PLANTARSE</button>
+    </div>
+
+
+    <!-- ── Comodines ── -->
+    <p class="titulo-seccion">COMODINES DE AYUDA</p>
+    <div class="comodines panel-hud" style="display:none;">
+        <button id="botonCincuentaCincuenta" onclick="cincuentaCincuenta()">
+            ◈ 50:50 <span class="contador-insignia">(<span id="contadorCincuentaCincuenta">1</span>)</span>
+        </button>
+        <button id="botonCambiarPregunta" onclick="cambiarPregunta()">
+            ◉ CAMBIAR PREGUNTA <span class="contador-insignia">(<span id="contadorCambiarPregunta">1</span>)</span>
+        </button>
+        <button id="botonTiempoExtra" onclick="tiempoExtra()">
+            ⊕ TIEMPO EXTRA <span class="contador-insignia">(<span id="contadorTiempoExtra">1</span>)</span>
+        </button>
+        <button id="botonDobleOportunidad" onclick="dobleOportunidad()">
+            ⬡ DOBLE OPORTUNIDAD <span class="contador-insignia">(<span id="contadorDobleOportunidad">1</span>)</span>
+        </button>
+    </div>
+
+
+    <!-- ── Potenciadores ── -->
+    <p class="titulo-seccion">POTENCIADORES <span class="seccion-pista">(activa ANTES de ver la pregunta)</span></p>
+    <div class="potenciadores panel-hud" style="display:none;">
+        <button onclick="comodinesInfinitos()">♾️ COMODINES INFINITOS — 300 €</button>
+        <button onclick="doblePuntos()">✦ DOBLE PUNTUACIÓN</button>
+    </div>
+
+
+</div><!-- /contenedor-juego -->
+
+
+
+
+<!-- ══════════════════════════════════════════════
+    PANTALLA DE TRAMO
+═══════════════════════════════════════════════ -->
+<div id="pantallaTramo" style="display:none;">
+
+
+    <div class="tramo-cabecera">
+        <p class="tramo-etiqueta">// FIN DE TRAMO</p>
+        <h2 class="tramo-titulo">TRAMO COMPLETADO</h2>
+        <div class="tramo-insignia-nivel">
+            <span class="tramo-insignia-etiqueta">NIVEL SUPERADO</span>
+            <span id="nombreNivelCompletado" class="tramo-insignia-valor">—</span>
+        </div>
+    </div>
+
+
+    <!-- Capital y progreso -->
+    <div class="tramo-bloque-capital panel-hud">
+        <span class="tramo-capital-etiqueta">CAPITAL ACUMULADO</span>
+        <span class="tramo-capital-valor" id="dineroTramo">0 €</span>
+        <div class="tramo-pista-progreso">
+            <div class="tramo-barra-progreso" id="barraProgresoTramo" style="width:0%"></div>
+        </div>
+        <p class="tramo-capital-sub">Preguntas completadas en este tramo</p>
+    </div>
+
+
+    <!-- Siguiente nivel -->
+    <div class="tramo-bloque-siguiente">
+        <span class="tramo-etiqueta-siguiente">PRÓXIMO NIVEL →</span>
+        <span id="nombreSiguienteNivel" class="tramo-valor-siguiente">—</span>
+    </div>
+
+
+    <!-- Botones de decisión -->
+    <div class="tramo-acciones">
+        <button id="botonContinuarNivel" class="boton-continuar" onclick="continuarJuego()">▶ CONTINUAR AL SIGUIENTE NIVEL</button>
+        <button class="boton-plantar" onclick="plantarse()">⏹ PLANTARSE Y COBRAR</button>
+    </div>
+
+
+    <!-- Potenciadores para el próximo tramo -->
+    <p class="tramo-titulo-seccion">POTENCIADORES — PRÓXIMO TRAMO</p>
+    <div class="tramo-potenciadores">
+        <button onclick="doblePuntos()">✦ DOBLE PUNTOS</button>
+    </div>
+
+
+    <!-- Comprar comodines -->
+    <p class="tramo-titulo-seccion">ADQUIRIR COMODINES — <span id="etiquetaCosteComodin">75 €</span> / uso</p>
+    <div id="panelComprarComodines" class="tramo-cuadricula-compra"></div>
+
+
+    <!-- Ruleta de fortuna -->
+    <p class="tramo-titulo-seccion">RULETA DE FORTUNA</p>
+    <div id="contenedorRuleta">
+        <canvas id="lienzo-ruleta" width="280" height="280"></canvas>
+        <button class="boton-girar" onclick="girarRuleta()">⟳ GIRAR RULETA</button>
+    </div>
+    <p id="resultadoRuleta"></p>
+
+
+</div><!-- /pantalla-tramo -->
+
+
+
+
+<!-- ══════════════════════════════════════════════
+    PANTALLA DE DERROTA
+═══════════════════════════════════════════════ -->
+<div id="pantallaDerrota" style="display:none;">
+
+
+    <div class="derrota-craneo-contenedor">
+        <svg class="derrota-craneo" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+            <!-- Cabeza -->
+            <ellipse cx="100" cy="90" rx="72" ry="75" fill="#1a0020" stroke="#ff2a6d" stroke-width="2.5"/>
+            <!-- Brillo de la frente -->
+            <ellipse cx="80" cy="60" rx="22" ry="14" fill="rgba(255,42,109,0.08)" transform="rotate(-15,80,60)"/>
+            <!-- Cuencas de los ojos -->
+            <ellipse cx="72"  cy="95" rx="22" ry="26" fill="#0a0010"/>
+            <ellipse cx="128" cy="95" rx="22" ry="26" fill="#0a0010"/>
+            <!-- Brillo de los ojos -->
+            <ellipse cx="72"  cy="95" rx="13" ry="16" fill="#ff2a6d" opacity="0.7"/>
+            <ellipse cx="128" cy="95" rx="13" ry="16" fill="#ff2a6d" opacity="0.7"/>
+            <ellipse cx="72"  cy="95" rx="6"  ry="7"  fill="#ff8080"/>
+            <ellipse cx="128" cy="95" rx="6"  ry="7"  fill="#ff8080"/>
+            <!-- Orificio nasal -->
+            <path d="M93 122 Q100 130 107 122 Q107 135 100 138 Q93 135 93 122Z" fill="#0a0010"/>
+            <!-- Base de los dientes -->
+            <rect x="55" y="148" width="90" height="18" rx="4" fill="#1a0020" stroke="#ff2a6d" stroke-width="1.5"/>
+            <!-- Dientes individuales -->
+            <rect x="60"  y="150" width="12" height="14" rx="2" fill="#f0e0e0"/>
+            <rect x="75"  y="150" width="12" height="16" rx="2" fill="#f0e0e0"/>
+            <rect x="90"  y="150" width="12" height="16" rx="2" fill="#f0e0e0"/>
+            <rect x="105" y="150" width="12" height="16" rx="2" fill="#f0e0e0"/>
+            <rect x="120" y="150" width="12" height="14" rx="2" fill="#f0e0e0"/>
+            <!-- Mandíbula -->
+            <path d="M55 155 Q55 178 100 180 Q145 178 145 155" fill="#1a0020" stroke="#ff2a6d" stroke-width="2"/>
+            <!-- Grietas -->
+            <path d="M100 20 L97 55 L103 80" stroke="#ff2a6d" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <path d="M55 65 L75 80" stroke="#ff2a6d" stroke-width="1" fill="none" opacity="0.5"/>
+            <!-- Líneas de glitch -->
+            <rect x="30" y="85"  width="40" height="2" fill="#ff2a6d" opacity="0.3" class="linea-glitch"/>
+            <rect x="130" y="110" width="35" height="2" fill="#ff2a6d" opacity="0.3" class="linea-glitch"/>
+        </svg>
+    </div>
+
+
+    <h2 class="derrota-titulo">PROTOCOLO TERMINADO</h2>
+    <p class="derrota-subtitulo">// TODOS LOS CRÉDITOS PERDIDOS</p>
+
+
+    <div class="derrota-bloque-dinero">
+        <span class="derrota-etiqueta-dinero">CAPITAL PERDIDO</span>
+        <span class="derrota-valor-dinero" id="derrotaDinero">0 €</span>
+    </div>
+
+
+    <div class="derrota-acciones">
+        <button class="boton-reintentar" onclick="reiniciarJuego()">⟳ REINTENTAR PROTOCOLO</button>
+    </div>
+
+
+    <div class="derrota-texto-scanline">SYSTEM_FAILURE // ERR_CODE: 0xDEAD</div>
+
+
+</div><!-- /pantalla-derrota -->
+
+
+
+
+<!-- ══════════════════════════════════════════════
+    PANTALLA DE PLANTARSE
+═══════════════════════════════════════════════ -->
+<div id="pantallaPlantarse" style="display:none;">
+    <div class="plantar-icono">💼</div>
+    <h2 class="plantar-titulo">CAPITAL ASEGURADO</h2>
+    <p class="plantar-sub">// PROTOCOLO DETENIDO POR DECISIÓN DEL OPERADOR</p>
+    <div class="plantar-bloque-dinero">
+        <span class="plantar-etiqueta-dinero">CAPITAL OBTENIDO</span>
+        <span class="plantar-valor-dinero" id="plantarDinero">0 €</span>
+    </div>
+    <button class="boton-continuar" onclick="reiniciarJuego()">⟳ NUEVA PARTIDA</button>
+</div>
+
+
+
+
+<!-- ══════════════════════════════════════════════
+    PANTALLA DE VICTORIA
+═══════════════════════════════════════════════ -->
+<div id="pantallaVictoria" style="display:none;">
+    <div class="victoria-trofeo">🏆</div>
+    <h2 class="victoria-titulo">VICTORIA TOTAL</h2>
+    <p class="victoria-sub">// TODOS LOS PROTOCOLOS SUPERADOS</p>
+    <div class="victoria-bloque-dinero">
+        <span class="victoria-etiqueta-dinero">CAPITAL FINAL</span>
+        <span class="victoria-valor-dinero" id="victoriaDinero">0 €</span>
+    </div>
+    <button class="boton-continuar" onclick="reiniciarJuego()">⟳ JUGAR DE NUEVO</button>
+</div>
+
+
+
+
+<!-- ══════════════════════════════════════════════
+    SCRIPTS (ARCHIVOS JS)
+═══════════════════════════════════════════════ -->
+<script src="concurso.js"></script>
+
+
+</body>
+</html>
